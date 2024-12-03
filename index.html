@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert Hex to ESPHome Raw</title>
+    <script>
+        function convertHexToBinary(hexString) {
+            if (!/^[0-9A-Fa-f]+$/.test(hexString)) {
+                throw "Invalid input: " + hexString + " is not a hexadecimal string.";
+            }
+            let output = '';
+            for (let char of hexString) {
+                let decimal = parseInt(char, 16);
+                let binary = decimal.toString(2).padStart(4, '0');
+                output += binary;
+            }
+            return output;
+        }
+
+        function breakBinaryString(binaryString) {
+            if (!/^[01]+$/.test(binaryString)) {
+                throw "Invalid input: " + binaryString + " is not a binary string.";
+            }
+            let output = '';
+            for (let i = 0; i < binaryString.length; i++) {
+                output += binaryString[i];
+                if (i < binaryString.length - 1 && binaryString[i] !== binaryString[i + 1]) {
+                    output += '\n';
+                }
+            }
+            return output;
+        }
+
+        function calculateRFRaw(binarySignalArray, sampleRate, repeat) {
+            let rfRawSignal = binarySignalArray.split('\n').map(line => {
+                let length = line.length;
+                if (line.includes('1')) {
+                    return (length * sampleRate).toString();
+                } else {
+                    return (length * -sampleRate).toString();
+                }
+            });
+
+            let rfRaw = rfRawSignal.join(', ');
+            let repeatedRfRaw = Array(repeat).fill(rfRaw).join(', ');
+            return "[" + repeatedRfRaw + "]";
+        }
+
+        function convertHexToESPHomeRaw() {
+            let hexString = document.getElementById('hexString').value;
+            let sampleRate = parseInt(document.getElementById('sampleRate').value);
+            let repeat = parseInt(document.getElementById('repeat').value);
+
+            try {
+                let binaryString = convertHexToBinary(hexString);
+                let binaryArray = breakBinaryString(binaryString);
+                let rfRaw = calculateRFRaw(binaryArray, sampleRate, repeat);
+                document.getElementById('result').innerText = "code: " + rfRaw;
+            } catch (error) {
+                document.getElementById('result').innerText = error;
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label, input, button {
+            display: block;
+            width: 100%;
+            max-width: 600px;
+            margin: 10px 0;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 1em;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <h1>Convert Hex to ESPHome Raw</h1>
+    <label for="hexString">Hex String:</label>
+    <input type="text" id="hexString" required><br>
+    <label for="sampleRate">Sample Rate:</label>
+    <input type="number" id="sampleRate" required><br>
+    <label for="repeat">Repeat:</label>
+    <input type="number" id="repeat"><br>
+    <button onclick="convertHexToESPHomeRaw()">Convert</button>
+    <pre id="result"></pre>
+</body>
+</html>
