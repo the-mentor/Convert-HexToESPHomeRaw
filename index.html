@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Convert Hex to ESPHome Raw</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script>
         function convertHexToBinary(hexString) {
             if (!/^[0-9A-Fa-f]+$/.test(hexString)) {
@@ -80,6 +81,7 @@
         pre {
             white-space: pre-wrap;
             word-wrap: break-word;
+            font-size: 1.2em; /* Increase font size */
         }
     </style>
 </head>
@@ -96,5 +98,7 @@
     <input type="number" id="repeat"><br>
     <button onclick="convertHexToESPHomeRaw()">Convert</button>
     <pre id="result"></pre>
+    
+    <br><br><br><p>View the source code for this page on <a href="https://github.com/the-mentor/Convert-HexToESPHomeRaw" target="_blank"><i class="fab fa-github"></i> GitHub</a>.</p>
 </body>
 </html>
